@@ -3,29 +3,30 @@ package counter
 import "sort"
 
 type Char struct {
-	symbol string
-	freq   int
+	Symbol string
+	Freq   int
 }
+
+var Freqs []Char
 
 func FreqCount(str string) []Char {
-	var freqs []Char
 	for _, el := range str {
-		if i, ok := exists(freqs, el); ok {
-			freqs[i].freq++
+		if i, ok := exists(el); ok {
+			Freqs[i].Freq++
 		} else {
-			freqs = append(freqs, Char{string(el), 1})
+			Freqs = append(Freqs, Char{string(el), 1})
 		}
 	}
-	sort.SliceStable(freqs, func(i, j int) bool {
-		return freqs[i].freq > freqs[j].freq
+	sort.SliceStable(Freqs, func(i, j int) bool {
+		return Freqs[i].Freq > Freqs[j].Freq
 	})
 
-	return freqs
+	return Freqs
 }
 
-func exists(freqs []Char, symbol rune) (int, bool) {
-	for i, el := range freqs {
-		if el.symbol == string(symbol) {
+func exists(Symbol rune) (int, bool) {
+	for i, el := range Freqs {
+		if el.Symbol == string(Symbol) {
 			return i, true
 		}
 	}
