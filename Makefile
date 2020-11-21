@@ -2,13 +2,13 @@ PKG := github.com/kindacommander/sf-encoder
 
 go-build:
 	@echo " > Building binary..."
-	go build -o vendor/sf-encoder cmd/main.go
+	go build -o bin/sf-encoder cmd/main.go
 
-BIN=$(shell pwd)/vendor/sf-encoder
+BIN=$(shell pwd)/bin/sf-encoder
 exec:
 	@echo " > Executing..."
 ifneq ("$(wildcard $(BIN))","")
-	vendor/sf-encoder
+	bin/sf-encoder
 else
 	@echo " Error: No binary file"
 endif
