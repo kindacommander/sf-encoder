@@ -2,8 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
+	"github.com/kindacommander/sf-encoder/internal/counter"
 )
 
 func main() {
-	fmt.Println("Hello World")
+	str := strings.Join(os.Args[1:], "")
+	fmt.Println(counter.FreqCount(str))
 }
