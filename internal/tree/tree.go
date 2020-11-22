@@ -82,12 +82,12 @@ type Tree struct {
 }
 
 // Sholud be done somehow better
-func BuildCodeTree() *Tree {
+func BuildCodeTree() Tree {
 	var decSlice []string
 	for _, data := range counter.Freqs {
 		decSlice = append(decSlice, data.Str)
 	}
-	tree := &Tree{NewNode(strings.Join(decSlice, ""))}
+	tree := Tree{NewNode(strings.Join(decSlice, ""))}
 
 	var wg sync.WaitGroup
 	wg.Add(1)

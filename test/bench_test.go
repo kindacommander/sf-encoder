@@ -19,7 +19,7 @@ func Benchmark(b *testing.B) {
 		}
 		fmt.Println(counter.FreqCount(str))
 		tree := tree.BuildCodeTree()
-		(*tree).PrintTree()
+		tree.PrintTree()
 		if x := fmt.Sprintf("%d", 42); x != "42" {
 			b.Fatalf("Unexpected string: %s", x)
 		}

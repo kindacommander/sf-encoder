@@ -18,5 +18,5 @@ func main() {
 	fmt.Println(counter.FreqCount(str))
 	tree := tree.BuildCodeTree()
 	//time.Sleep(time.Second * 3)
-	(*tree).PrintTree()
+	tree.PrintTree()
 }
