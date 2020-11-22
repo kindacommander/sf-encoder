@@ -2,27 +2,23 @@ package tree
 
 import (
 	"sync"
-
-	"github.com/kindacommander/sf-encoder/internal/counter"
 )
 
-type Data counter.Data
-
-type Node struct {
+type node struct {
 	data      string
-	leftNode  *Node
-	rightNode *Node
+	leftNode  *node
+	rightNode *node
 }
 
-func NewNode(data string) *Node {
-	return &Node{data, nil, nil}
+func newNode(data string) *node {
+	return &node{data, nil, nil}
 }
 
-func (n *Node) isLeaf() bool {
+func (n *node) isLeaf() bool {
 	return n.leftNode == nil && n.rightNode == nil
 }
 
-func (n *Node) insert(wg *sync.WaitGroup, data string) {
+func (n *node) insert(wg *sync.WaitGroup, data string) {
 	defer wg.Done()
 	if n == nil {
 		return
@@ -30,9 +26,9 @@ func (n *Node) insert(wg *sync.WaitGroup, data string) {
 	if len(data) == 1 {
 		return
 	}
-	halfLen := FindHalfLen(data)
-	n.leftNode = NewNode(data[:halfLen])
-	n.rightNode = NewNode(data[halfLen:])
+	halfLen := findHalfLen(data)
+	n.leftNode = newNode(data[:halfLen])
+	n.rightNode = newNode(data[halfLen:])
 
 	var newWg sync.WaitGroup
 	newWg.Add(1)
@@ -42,7 +38,7 @@ func (n *Node) insert(wg *sync.WaitGroup, data string) {
 	newWg.Wait()
 }
 
-func FindHalfLen(str string) int {
+func findHalfLen(str string) int {
 	halfFreqLen := len(str) / 2
 	for {
 		firstHalfFreq := evaluateFreq(str[:halfFreqLen])
@@ -66,7 +62,7 @@ func abs(x int) int {
 func evaluateFreq(str string) int {
 	freq := 0
 	for _, r := range str {
-		for _, d := range counter.Freqs {
+		for _, d := range currFreqsBuf {
 			if string(r) == d.Str {
 				freq += d.TotalFreq
 			}

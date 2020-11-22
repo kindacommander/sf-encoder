@@ -5,8 +5,6 @@ import (
 	"testing"
 
 	"github.com/kindacommander/sf-encoder/internal/tree"
-
-	"github.com/kindacommander/sf-encoder/internal/counter"
 )
 
 func Benchmark(b *testing.B) {
@@ -17,9 +15,9 @@ func Benchmark(b *testing.B) {
 			fmt.Println("Please, enter a string to encode.")
 			return
 		}
-		fmt.Println(counter.FreqCount(str))
-		tree := tree.BuildCodeTree()
-		tree.PrintTree()
+		tree.BuildCodeTree(str)
+		// tree := tree.BuildCodeTree(str)
+		// tree.PrintTree()
 		if x := fmt.Sprintf("%d", 42); x != "42" {
 			b.Fatalf("Unexpected string: %s", x)
 		}

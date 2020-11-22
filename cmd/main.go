@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kindacommander/sf-encoder/internal/counter"
 	"github.com/kindacommander/sf-encoder/internal/tree"
 )
 
@@ -15,8 +14,6 @@ func main() {
 		fmt.Println("Please, enter a string to encode.")
 		return
 	}
-	fmt.Println(counter.FreqCount(str))
-	tree := tree.BuildCodeTree()
-	//time.Sleep(time.Second * 3)
+	tree := tree.BuildCodeTree(str)
 	tree.PrintTree()
 }
