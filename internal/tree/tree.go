@@ -3,6 +3,7 @@ package tree
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/kindacommander/sf-encoder/internal/counter"
 )
@@ -23,7 +24,8 @@ func (n *Node) isLeaf() bool {
 	return n.leftNode == nil && n.rightNode == nil
 }
 
-func (n *Node) insert(data string) {
+func (n *Node) insert(wg *sync.WaitGroup, data string) {
+	defer wg.Done()
 	if n == nil {
 		return
 	}
@@ -33,8 +35,13 @@ func (n *Node) insert(data string) {
 	halfLen := FindHalfLen(data)
 	n.leftNode = NewNode(data[:halfLen])
 	n.rightNode = NewNode(data[halfLen:])
-	n.leftNode.insert(data[:halfLen])
-	n.rightNode.insert(data[halfLen:])
+
+	var newWg sync.WaitGroup
+	newWg.Add(1)
+	go n.leftNode.insert(&newWg, data[:halfLen])
+	newWg.Add(1)
+	go n.rightNode.insert(&newWg, data[halfLen:])
+	newWg.Wait()
 }
 
 func FindHalfLen(str string) int {
@@ -81,12 +88,16 @@ func BuildCodeTree() *Tree {
 		decSlice = append(decSlice, data.Str)
 	}
 	tree := &Tree{NewNode(strings.Join(decSlice, ""))}
-	tree.root.insert(strings.Join(decSlice, ""))
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	tree.root.insert(&wg, strings.Join(decSlice, ""))
+	wg.Wait()
 	return tree
 }
 
 func (t Tree) PrintTree() {
-	printNode(t.root, 0, 'M')
+	printNode(t.root, 0, 'R')
 }
 
 func printNode(node *Node, ns int, ch rune) {
@@ -94,7 +105,7 @@ func printNode(node *Node, ns int, ch rune) {
 		return
 	}
 	for i := 0; i < ns; i++ {
-		fmt.Print(" ")
+		fmt.Print("  ")
 	}
 	fmt.Printf("%c:%v\n", ch, node.data)
 	printNode(node.leftNode, ns+2, 'L')
