@@ -1,6 +1,9 @@
 package tree
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/kindacommander/sf-encoder/internal/counter"
 )
 
@@ -71,12 +74,29 @@ type Tree struct {
 	root *Node
 }
 
-func BuildCodeTree(str string) *Tree {
-	tree := &Tree{NewNode(str)}
-	tree.root.insert(str)
+// Sholud be done somehow better
+func BuildCodeTree() *Tree {
+	var decSlice []string
+	for _, data := range counter.Freqs {
+		decSlice = append(decSlice, data.Str)
+	}
+	tree := &Tree{NewNode(strings.Join(decSlice, ""))}
+	tree.root.insert(strings.Join(decSlice, ""))
 	return tree
 }
 
 func (t Tree) PrintTree() {
-	// TODO
+	printNode(t.root, 0, 'M')
+}
+
+func printNode(node *Node, ns int, ch rune) {
+	if node == nil {
+		return
+	}
+	for i := 0; i < ns; i++ {
+		fmt.Print(" ")
+	}
+	fmt.Printf("%c:%v\n", ch, node.data)
+	printNode(node.leftNode, ns+2, 'L')
+	printNode(node.rightNode, ns+2, 'R')
 }
