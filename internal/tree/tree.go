@@ -36,13 +36,59 @@ func BuildCodeTree(str string) Tree {
 	for _, data := range freqs {
 		decSlice = append(decSlice, data.Str)
 	}
+
+	CodeTable = make([]encodedChar, len(currFreqsBuf))
+	codes = make(chan encodedChar)
+	done = make(chan struct{})
+
+	go codeListener(codes)
+
 	tree := Tree{newNode(strings.Join(decSlice, "")), freqs}
 
 	var wg sync.WaitGroup
 	wg.Add(1)
-	tree.root.insert(&wg, strings.Join(decSlice, ""))
+	tree.root.insert(&wg, strings.Join(decSlice, ""), "", codes)
 	wg.Wait()
+	close(codes)
+	<-done
 	return tree
+}
+
+var (
+	mu        sync.Mutex
+	CodeTable []encodedChar
+	codes     chan encodedChar
+	done      chan struct{}
+)
+
+func codeListener(codes chan encodedChar) {
+	i := 0
+	var wg sync.WaitGroup
+	for code := range codes {
+		wg.Add(1)
+		go func(i int, code encodedChar, wg *sync.WaitGroup) {
+			defer wg.Done()
+			mu.Lock()
+			CodeTable[i] = code
+			mu.Unlock()
+		}(i, code, &wg)
+		i++
+	}
+	wg.Wait()
+	done <- struct{}{}
+	// for {
+	// 	select {
+	// 	case code := <-codes:
+	// 		mu.Lock()
+	// 		CodeTable[i] = code
+	// 		i++
+	// 		mu.Unlock()
+	// 	}
+	// 	if i == len(CodeTable) {
+	// 		close(codes)
+	// 		break
+	// 	}
+	// }
 }
 
 type data struct {

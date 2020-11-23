@@ -14,6 +14,7 @@ func main() {
 		fmt.Println("Please, enter a string to encode.")
 		return
 	}
-	tree := tree.BuildCodeTree(str)
-	tree.PrintTree()
+	t := tree.BuildCodeTree(str)
+	t.PrintTree()
+	fmt.Println(tree.CodeTable)
 }

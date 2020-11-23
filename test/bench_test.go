@@ -16,8 +16,9 @@ func Benchmark(b *testing.B) {
 			return
 		}
 		tree.BuildCodeTree(str)
-		// tree := tree.BuildCodeTree(str)
-		// tree.PrintTree()
+		// t := tree.BuildCodeTree(str)
+		// t.PrintTree()
+		//fmt.Println(tree.CodeTable)
 		if x := fmt.Sprintf("%d", 42); x != "42" {
 			b.Fatalf("Unexpected string: %s", x)
 		}

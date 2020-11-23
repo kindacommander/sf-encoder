@@ -18,12 +18,20 @@ func (n *node) isLeaf() bool {
 	return n.leftNode == nil && n.rightNode == nil
 }
 
-func (n *node) insert(wg *sync.WaitGroup, data string) {
-	defer wg.Done()
+type encodedChar struct {
+	char string
+	code string
+}
+
+func (n *node) insert(wg *sync.WaitGroup, data string, currCode string, codes chan encodedChar) {
+	//defer wg.Done()
 	if n == nil {
+		wg.Done()
 		return
 	}
 	if len(data) == 1 {
+		codes <- encodedChar{data, currCode}
+		wg.Done()
 		return
 	}
 	halfLen := findHalfLen(data)
@@ -31,11 +39,14 @@ func (n *node) insert(wg *sync.WaitGroup, data string) {
 	n.rightNode = newNode(data[halfLen:])
 
 	var newWg sync.WaitGroup
+	leftStr := currCode + "1"
+	rightStr := currCode + "0"
 	newWg.Add(1)
-	go n.leftNode.insert(&newWg, data[:halfLen])
+	go n.leftNode.insert(&newWg, data[:halfLen], leftStr, codes)
 	newWg.Add(1)
-	go n.rightNode.insert(&newWg, data[halfLen:])
+	go n.rightNode.insert(&newWg, data[halfLen:], rightStr, codes)
 	newWg.Wait()
+	wg.Done()
 }
 
 func findHalfLen(str string) int {
