@@ -9,9 +9,23 @@ import (
 var currFreqsBuf []data // Current freqs buffer
 
 type Tree struct {
+	baseStr   string
 	root      *node
 	FreqsBuf  []data // Individual buffer for each tree
 	codeTable []encodedChar
+}
+
+func (t Tree) Encode() string {
+	var encodedStr string
+	for _, a := range t.baseStr {
+		for _, b := range t.codeTable {
+			if string(a) == b.char {
+				encodedStr = encodedStr + b.code
+				break
+			}
+		}
+	}
+	return encodedStr
 }
 
 func (t Tree) PrintTree() {
@@ -60,7 +74,7 @@ func BuildCodeTree(str string) Tree {
 
 	go codeListener(codes, &codeTable)
 
-	tree := Tree{newNode(strings.Join(decSlice, "")), freqs, codeTable}
+	tree := Tree{str, newNode(strings.Join(decSlice, "")), freqs, codeTable}
 
 	var wg sync.WaitGroup
 	wg.Add(1)

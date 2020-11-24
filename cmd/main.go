@@ -17,4 +17,6 @@ func main() {
 	t := tree.BuildCodeTree(str)
 	t.PrintTree()
 	t.PrintCodeTable()
+	fmt.Println("Encoded string:")
+	fmt.Println(t.Encode())
 }
