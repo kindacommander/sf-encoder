@@ -15,5 +15,5 @@ func TestDataRace(t *testing.T) {
 	}
 	tr := tree.BuildCodeTree(str)
 	tr.PrintTree()
-	fmt.Println(tree.CodeTable)
+	tr.PrintCodeTable()
 }

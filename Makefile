@@ -12,3 +12,15 @@ ifneq ("$(wildcard $(BIN))","")
 else
 	@echo " Error: No binary file"
 endif
+
+go-test-race:
+	@echo " > Testing for data race..."
+	go test test/race_test.go -race
+
+go-test-bench:
+	@echo " > Benchmarking timing..."
+	go test -bench=. test/bench_test.go
+
+go-test-benchmem:
+	@echo " > Benchmarking memory usage..."
+	go test -bench=. test/bench_test.go -benchmem

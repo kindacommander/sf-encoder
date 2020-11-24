@@ -2,7 +2,6 @@ package tree
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 	"sync"
 )
@@ -10,12 +9,23 @@ import (
 var currFreqsBuf []data // Current freqs buffer
 
 type Tree struct {
-	root     *node
-	FreqsBuf []data // Individual buffer for each tree
+	root      *node
+	FreqsBuf  []data // Individual buffer for each tree
+	codeTable []encodedChar
 }
 
 func (t Tree) PrintTree() {
 	printNode(t.root, 0, 'M')
+}
+
+func (t Tree) CodeTable() []encodedChar {
+	return t.codeTable
+}
+
+func (t Tree) PrintCodeTable() {
+	for _, el := range t.codeTable {
+		fmt.Println("{" + el.char + "}" + " = " + el.code)
+	}
 }
 
 func printNode(node *node, ns int, ch rune) {
@@ -30,6 +40,12 @@ func printNode(node *node, ns int, ch rune) {
 	printNode(node.rightNode, ns+2, 'R')
 }
 
+var (
+	mu    sync.Mutex
+	codes chan encodedChar
+	done  chan struct{}
+)
+
 func BuildCodeTree(str string) Tree {
 	freqs := freqCount(str)
 	var decSlice []string
@@ -37,13 +53,14 @@ func BuildCodeTree(str string) Tree {
 		decSlice = append(decSlice, data.Str)
 	}
 
-	CodeTable = make([]encodedChar, len(currFreqsBuf))
 	codes = make(chan encodedChar)
 	done = make(chan struct{})
 
-	go codeListener(codes)
+	codeTable := make([]encodedChar, len(currFreqsBuf))
 
-	tree := Tree{newNode(strings.Join(decSlice, "")), freqs}
+	go codeListener(codes, &codeTable)
+
+	tree := Tree{newNode(strings.Join(decSlice, "")), freqs, codeTable}
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -51,17 +68,11 @@ func BuildCodeTree(str string) Tree {
 	wg.Wait()
 	close(codes)
 	<-done
+
 	return tree
 }
 
-var (
-	mu        sync.Mutex
-	CodeTable []encodedChar
-	codes     chan encodedChar
-	done      chan struct{}
-)
-
-func codeListener(codes chan encodedChar) {
+func codeListener(codes chan encodedChar, codeTable *[]encodedChar) {
 	i := 0
 	var wg sync.WaitGroup
 	for code := range codes {
@@ -69,59 +80,11 @@ func codeListener(codes chan encodedChar) {
 		go func(i int, code encodedChar, wg *sync.WaitGroup) {
 			defer wg.Done()
 			mu.Lock()
-			CodeTable[i] = code
+			(*codeTable)[i] = code
 			mu.Unlock()
 		}(i, code, &wg)
 		i++
 	}
 	wg.Wait()
 	done <- struct{}{}
-	// for {
-	// 	select {
-	// 	case code := <-codes:
-	// 		mu.Lock()
-	// 		CodeTable[i] = code
-	// 		i++
-	// 		mu.Unlock()
-	// 	}
-	// 	if i == len(CodeTable) {
-	// 		close(codes)
-	// 		break
-	// 	}
-	// }
-}
-
-type data struct {
-	Str       string
-	TotalFreq int
-}
-
-func freqCount(str string) []data {
-	for _, el := range str {
-		if i, ok := exists(el); ok {
-			currFreqsBuf[i].TotalFreq++
-		} else {
-			currFreqsBuf = append(currFreqsBuf, data{string(el), 1})
-		}
-	}
-	sort.SliceStable(currFreqsBuf, func(i, j int) bool {
-		return currFreqsBuf[i].TotalFreq > currFreqsBuf[j].TotalFreq
-	})
-	freqs := make([]data, len(currFreqsBuf))
-	copy(freqs, currFreqsBuf)
-
-	//  ONLY FOR DEBUG
-	fmt.Println(freqs)
-	//  ONLY FOR DEBUG
-
-	return freqs
-}
-
-func exists(str rune) (int, bool) {
-	for i, el := range currFreqsBuf {
-		if el.Str == string(str) {
-			return i, true
-		}
-	}
-	return -1, false
 }

@@ -16,5 +16,5 @@ func main() {
 	}
 	t := tree.BuildCodeTree(str)
 	t.PrintTree()
-	fmt.Println(tree.CodeTable)
+	t.PrintCodeTable()
 }
