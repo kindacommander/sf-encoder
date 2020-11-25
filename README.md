@@ -1,7 +1,10 @@
 ### sf-encoder
-
-# How to run
+# How to build binaries:
+Encoder:
 ```bash
-make go-build
-make exec
+make build-encoder
+```
+Timings benchmark:
+```bash
+make build-benchmark
 ```

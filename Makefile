@@ -1,10 +1,10 @@
 PKG := github.com/kindacommander/sf-encoder
 
-go-build-encoder:
+build-encoder:
 	@echo " > Building binary: encoder..."
 	go build -o bin/sf-encoder cmd/encoder/main.go
 
-go-build-benchmark:
+build-benchmark:
 	@echo " > Building binary: benchmark..."
 	go build -o bin/encoder-benchmark cmd/benchmark/main.go
 

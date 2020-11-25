@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -9,6 +10,12 @@ import (
 )
 
 func main() {
+
+	printTree := flag.Bool("t", false, "If true - prints the view of the code tree.")
+	printCodeTable := flag.Bool("c", false, "If true - prints the code table.")
+
+	flag.Parse()
+
 	str := strings.Join(os.Args[1:], "")
 	if len(str) < 1 {
 		fmt.Println("Please, enter a string to encode.")
@@ -16,11 +23,15 @@ func main() {
 	}
 	t := tree.BuildCodeTree(str)
 
-	fmt.Println("Tree:")
-	t.PrintTree()
+	if *printTree {
+		fmt.Println("Code tree:")
+		t.PrintTree()
+	}
 
-	fmt.Println("Code table:")
-	t.PrintCodeTable()
+	if *printCodeTable {
+		fmt.Println("Code table:")
+		t.PrintCodeTable()
+	}
 
 	fmt.Println("Encoded string:")
 	fmt.Println(t.Encode())
