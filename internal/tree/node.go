@@ -38,13 +38,11 @@ func (n *node) insert(wg *sync.WaitGroup, data string, currCode string, codes ch
 	n.leftNode = newNode(data[:halfLen])
 	n.rightNode = newNode(data[halfLen:])
 
-	var newWg sync.WaitGroup
 	leftStr := currCode + "1"
 	rightStr := currCode + "0"
-	newWg.Add(2)
-	go n.leftNode.insert(&newWg, data[:halfLen], leftStr, codes)
-	go n.rightNode.insert(&newWg, data[halfLen:], rightStr, codes)
-	newWg.Wait()
+	wg.Add(2)
+	go n.leftNode.insert(wg, data[:halfLen], leftStr, codes)
+	go n.rightNode.insert(wg, data[halfLen:], rightStr, codes)
 	wg.Done()
 }
 

@@ -9,9 +9,14 @@ import (
 )
 
 func Benchmark(b *testing.B) {
-	start := time.Now()
+	var start time.Time
+	var timing time.Duration
+
 	for i := 0; i < b.N; i++ {
-		str := "abbads,mnmxcvkxl;ckvoipoit][p[]p[]p[p]qweqwezxchkhkhghlgfghfghklggnhxcvmn,/./,.,//.,g"
+
+		start = time.Now()
+
+		str := "abbads,mnmxcvkxl;ckvoipoit][p[]p[]p[p]qweqwezxchkhkhghlgfghfghklggnhxcv192839095654-098-0213-==-==++_+++___~~~````asdkjaskxcn,mbmn,/./,.,//.,g"
 		tree.BuildCodeTree(str)
 		//t := tree.BuildCodeTree(str)
 		// t.PrintTree()
@@ -22,6 +27,9 @@ func Benchmark(b *testing.B) {
 		if x := fmt.Sprintf("%d", 42); x != "42" {
 			b.Fatalf("Unexpected string: %s", x)
 		}
-		fmt.Printf("Average timing: %v\n", time.Since(start)/time.Duration(b.N))
+
+		timing += time.Since(start)
+
 	}
+	fmt.Printf("Average timing: %v\n", timing/time.Duration(b.N))
 }

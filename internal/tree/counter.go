@@ -1,7 +1,6 @@
 package tree
 
 import (
-	"fmt"
 	"sort"
 )
 
@@ -23,10 +22,6 @@ func freqCount(str string) []data {
 	})
 	freqs := make([]data, len(currFreqsBuf))
 	copy(freqs, currFreqsBuf)
-
-	//  ONLY FOR DEBUG
-	fmt.Println(freqs)
-	//  ONLY FOR DEBUG
 
 	return freqs
 }
